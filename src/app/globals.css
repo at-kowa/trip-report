@@ -134,15 +134,41 @@ a.btn { display: inline-block; text-decoration: none; }
 .timeline .cmt { background: #f7f9fb; border-radius: 4px; padding: 4px 10px; margin-top: 4px; white-space: pre-wrap; }
 .btn.ok { background: var(--green); border-color: var(--green); color: #fff; }
 
-/* PDF出力（印刷）：A4縦。訪問先ごとの改ページはせず、写真はページ内に収める。承認履歴は含めない */
-@page { size: A4 portrait; margin: 15mm; }
+/* PDF出力（印刷）：A4縦。訪問先ごとの改ページはせず、写真はページ内に収める。承認履歴は含めない
+   体裁は社内の「出張報告書」の様式（明朝体・承認欄・基本項目の表）に合わせる */
+@page {
+  size: A4 portrait;
+  margin: 15mm 15mm 12mm;
+  @top-right { content: "NO　" counter(page) " / " counter(pages); font: 9pt "ＭＳ 明朝", "MS Mincho", serif; }
+}
+.print-only { display: none; }
 @media print {
-  header, .actions, .no-print { display: none !important; }
+  header, .actions, .no-print, .screen-only { display: none !important; }
+  .print-only { display: block; }
   body { background: #fff; }
   main { padding: 0; max-width: none; }
-  .card, .visit { border-color: #999; }
   .content img { max-width: 100% !important; max-height: 230mm; object-fit: contain; break-inside: avoid; }
 }
+.print-report { font-family: "ＭＳ 明朝", "MS Mincho", "Yu Mincho", serif; font-size: 10.5pt; color: #000; line-height: 1.7; }
+.print-report .pr-status { font-size: 9pt; }
+.print-report .pr-title { text-align: center; font-size: 16pt; font-weight: normal; text-decoration: underline; text-underline-offset: 4px; margin: 0 0 6mm; letter-spacing: 0.3em; }
+.print-report .pr-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 8mm; }
+.print-report .pr-lead { font-size: 12pt; padding-left: 8mm; }
+.print-report table { border-collapse: collapse; }
+.print-report .pr-stamps th, .print-report .pr-stamps td { border: 1px solid #000; width: 20mm; text-align: center; font-weight: normal; }
+.print-report .pr-stamps th { font-size: 8pt; line-height: 1.3; padding: 1mm; }
+.print-report .pr-stamps td { height: 17mm; }
+.print-report .pr-seal { display: inline-block; color: #c00; border: 1px solid #c00; border-radius: 50%; width: 14mm; height: 14mm; font-size: 7.5pt; line-height: 1.25; padding-top: 3mm; box-sizing: border-box; }
+.print-report .pr-sign { display: flex; justify-content: space-between; margin: 5mm 0 2mm; padding: 0 8mm; }
+.print-report .pr-sign u { text-underline-offset: 3px; margin-left: 6mm; padding: 0 4mm; }
+.print-report .pr-basic { width: 100%; border: 1.5px solid #000; }
+.print-report .pr-basic th, .print-report .pr-basic td { border: 1px solid #000; padding: 1mm 2mm; font-weight: normal; }
+.print-report .pr-basic th { width: 30mm; text-align: left; white-space: nowrap; }
+.print-report .pr-body { border: 1.5px solid #000; border-top: none; padding: 2mm 3mm 4mm; }
+.print-report .pr-visit { margin-top: 2mm; }
+.print-report .pr-visit-head { border-bottom: 1px solid #000; margin-bottom: 1mm; break-after: avoid; }
+.print-report .pr-visit-date { float: right; }
+.print-report .content p { margin: 0; }
 
 /* 承認対応：提出から日数がたった承認待ち */
 table.list tr.stale td { background: var(--orange-soft); }
