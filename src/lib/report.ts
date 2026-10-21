@@ -8,6 +8,9 @@ export const STATUS_LABEL: Record<ReportStatus, string> = {
   approved: "承認済",
 };
 
+// 申請者本人から見た状況の表示（申請中 → 提出済）
+export const OWNER_STATUS_LABEL: Record<ReportStatus, string> = { ...STATUS_LABEL, pending: "提出済" };
+
 // 承認ルートの各承認者の状態：承認済み／承認待ち（今の順番）／未到達
 export type StepState = "done" | "now" | "";
 

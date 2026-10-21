@@ -1,5 +1,6 @@
 // PDF出力（印刷）用の体裁：社内の「出張報告書」の様式に合わせる（画面には表示しない）
-//   承認欄は最終承認者を左に並べ、承認済みの欄に「承認」と日付を入れる。承認履歴（コメント等）は載せない
+//   承認欄は最終承認者を左に並べ、承認済みの欄に「承認」と日付を入れる。右端は申請者の欄で、提出後は「申請」と提出日を入れる
+//   承認履歴（コメント等）は載せない
 import { STATUS_LABEL, type ReportStatus } from "@/lib/report";
 import type { VisitRow } from "@/lib/reportServer";
 import VisitContent from "@/components/VisitContent";
@@ -28,6 +29,8 @@ function shortDate(ts: string): string {
 export default function PrintReport({ status, ownerName, startDate, endDate, submittedAt, steps, visits }: Props) {
   const customers = [...new Set(visits.map((v) => v.customer_name).filter(Boolean))];
   const stamps = [...steps].sort((a, b) => b.step_no - a.step_no);
+  // 申請者の印：提出して申請中・承認済のときに押す（下書き・差戻しは再提出まで空欄）
+  const applicantStampAt = (status === "pending" || status === "approved") ? submittedAt : null;
 
   return (
     <div className="print-only print-report">
@@ -36,18 +39,17 @@ export default function PrintReport({ status, ownerName, startDate, endDate, sub
 
       <div className="pr-head">
         <div className="pr-lead">下記のとおり報告致します。</div>
-        {stamps.length > 0 && (
-          <table className="pr-stamps">
-            <tbody>
-              <tr>{stamps.map((s) => <th key={s.step_no}>{s.name}</th>)}</tr>
-              <tr>
-                {stamps.map((s) => (
-                  <td key={s.step_no}>{s.approvedAt && <span className="pr-seal">承認<br />{shortDate(s.approvedAt)}</span>}</td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        )}
+        <table className="pr-stamps">
+          <tbody>
+            <tr>{stamps.map((s) => <th key={s.step_no}>{s.name}</th>)}<th>{ownerName}</th></tr>
+            <tr>
+              {stamps.map((s) => (
+                <td key={s.step_no}>{s.approvedAt && <span className="pr-seal">承認<br />{shortDate(s.approvedAt)}</span>}</td>
+              ))}
+              <td>{applicantStampAt && <span className="pr-seal">申請<br />{shortDate(applicantStampAt)}</span>}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <div className="pr-sign">
