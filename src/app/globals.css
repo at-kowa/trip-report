@@ -194,3 +194,7 @@ dialog.photo-zoom .photo-zoom-hint { text-align: center; color: #fff; font-size:
 
 /* 新しい版のお知らせ（UpdateNotice） */
 .update-notice { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 10px 16px; background: var(--orange-soft); border-bottom: 1px solid var(--orange); color: var(--navy); font-size: 14px; }
+
+/* ログイン画面のテスト用の利用者一覧（小さめの文字） */
+.test-users { font-size: 12px; }
+.test-users table.list th, .test-users table.list td { padding: 4px 8px; font-size: 11px; }

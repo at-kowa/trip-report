@@ -68,7 +68,9 @@ v2.0 は `C:\work\以前の検討資料\出張報告システム_要件定義書
   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Config |
   | `SUPABASE_SERVICE_ROLE_KEY` | Secret |
 
-  `SHOW_TEST_USERS` は設定しない。環境変数を変えたら再デプロイする（`NEXT_PUBLIC_` の値はビルド時に組み込まれるため）
+  | `SHOW_TEST_USERS` | Config（値は `1`。ログイン画面にテスト用の利用者一覧を出す。架空データだけの研修期間中に限る。実データを扱う本番では設定しない） |
+
+  環境変数を変えたら再デプロイする（`NEXT_PUBLIC_` の値はビルド時に組み込まれるため）
 - 公開されている版は、画面下部のバージョン表示（コミット番号）で確認できる
 
 ## フォルダ構成
