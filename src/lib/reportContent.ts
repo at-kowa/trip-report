@@ -45,6 +45,21 @@ export function isEmptyDoc(doc: JSONContent | null | undefined): boolean {
   return empty;
 }
 
+// 訪問内容を文字だけにする（CSV出力用）。段落・改行は改行に、写真は［写真］に置き換え、装飾は外す
+export function docToText(doc: JSONContent | null | undefined): string {
+  if (!doc) return "";
+  const out = (n: JSONContent): string => {
+    switch (n.type) {
+      case "text": return n.text ?? "";
+      case "hardBreak": return "\n";
+      case "image": return "［写真］";
+      case "paragraph": return (n.content ?? []).map(out).join("");
+      default: return (n.content ?? []).map(out).join(n.type === "doc" ? "\n" : "");
+    }
+  };
+  return out(doc).replace(/\n+$/, "");
+}
+
 // 写真ファイルの拡張子（Storage の置き場所に使う）
 export function photoExt(file: File): string {
   const fromName = file.name.match(/\.([A-Za-z0-9]+)$/)?.[1]?.toLowerCase();
