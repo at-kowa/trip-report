@@ -2,13 +2,16 @@
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { EMPTY_DOC } from "@/lib/reportContent";
-import { loadSuggestions } from "@/lib/reportServer";
+import { loadPreviewSteps, loadSuggestions } from "@/lib/reportServer";
 import ReportForm from "../ReportForm";
 
 export default async function NewReport() {
   const me = await requireRole("applicant");
   const supabase = await createClient();
-  const suggestions = await loadSuggestions(supabase);
+  const [suggestions, previewSteps] = await Promise.all([
+    loadSuggestions(supabase),
+    loadPreviewSteps(supabase, me.id, null, "draft"),
+  ]);
 
   return (
     <ReportForm
@@ -23,6 +26,7 @@ export default async function NewReport() {
       applicantName={me.name}
       rejectComment={null}
       suggestions={suggestions}
+      previewSteps={previewSteps}
     />
   );
 }

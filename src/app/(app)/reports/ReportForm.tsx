@@ -11,6 +11,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { ReportStatus } from "@/lib/report";
 import { EMPTY_DOC, isEmptyDoc, photoExt, photoIdsOf, stripPhotoSrc } from "@/lib/reportContent";
 import StatusTag from "@/components/StatusTag";
+import PrintReport from "@/components/PrintReport";
 import VisitEditor from "@/components/VisitEditor";
 import { T, F, PHOTO_BUCKET } from "@/lib/db";
 
@@ -28,6 +29,7 @@ export type FormReport = {
   status: ReportStatus;
   start_date: string;
   end_date: string;
+  submitted_at?: string | null;   // PDF確認の提出日・申請者の印（申請中のみ）
   visits: FormVisit[];
 };
 
@@ -50,11 +52,12 @@ function validate(start: string, end: string, visits: FormVisit[]): string[] {
   return e;
 }
 
-export default function ReportForm({ report, applicantName, rejectComment, suggestions }: {
+export default function ReportForm({ report, applicantName, rejectComment, suggestions, previewSteps }: {
   report: FormReport;
   applicantName: string;
   rejectComment: { name: string; comment: string } | null;
   suggestions: { customers: string[]; contacts: string[] };
+  previewSteps: { step_no: number; name: string }[];   // PDF確認の承認欄
 }) {
   const router = useRouter();
   const [start, setStart] = useState(report.start_date);
@@ -215,14 +218,33 @@ export default function ReportForm({ report, applicantName, rejectComment, sugge
     router.push(report.isNew ? "/my" : `/reports/${report.id}`);
   }
 
+  // PDF確認：保存していない入力中の内容のまま、PDF出力と同じ様式で印刷する
+  const fileDate = start.replaceAll("-", "");
+  const firstCustomer = visits.find((v) => v.customer_name.trim())?.customer_name.trim() ?? "";
+
   return (
     <>
-      <h2>出張報告書 {report.isNew ? "新規作成" : "編集"} <StatusTag status={report.status} /></h2>
+      {/* 印刷時の既定のファイル名（例：20261005_出張報告書_架空商事_確認用） */}
+      <title>{[fileDate, "出張報告書", firstCustomer, "確認用"].filter(Boolean).join("_")}</title>
+      <PrintReport
+        status={report.status}
+        ownerName={applicantName}
+        startDate={start || null}
+        endDate={end || null}
+        submittedAt={pending ? report.submitted_at ?? null : null}
+        steps={previewSteps.map((s) => ({ ...s, approvedAt: null }))}
+        visits={visits.map((v, i) => ({
+          id: v.id, sort_order: i, visit_date: v.visit_date || null,
+          customer_name: v.customer_name.trim(), contact_name: v.contact_name.trim(), content: v.content,
+        }))}
+      />
+      <div className="screen-only">
+      <h2>出張報告書 {report.isNew ? "新規作成" : "編集"} <StatusTag status={report.status} owner /></h2>
       {report.status === "rejected" && rejectComment && (
         <div className="errbox"><b>差戻しコメント（{rejectComment.name}）</b><br /><span style={{ whiteSpace: "pre-wrap" }}>{rejectComment.comment}</span></div>
       )}
       {pending && (
-        <div className="card hint">申請中ですが、最初の承認者が承認する前のため編集できます。保存すると申請中のまま内容が更新されます。</div>
+        <div className="card hint">提出済みですが、最初の承認者が承認する前のため編集できます。保存すると提出済みのまま内容が更新されます。</div>
       )}
       {errors.length > 0 && (
         <div className="errbox"><b>入力内容を確認してください</b><ul>{errors.map((e, i) => <li key={i}>{e}</li>)}</ul></div>
@@ -271,10 +293,12 @@ export default function ReportForm({ report, applicantName, rejectComment, sugge
         )}
         <button type="button" className="btn" disabled={busy} onClick={cancel}>キャンセル</button>
         <span className="spacer" />
+        <button type="button" className="btn" disabled={busy} onClick={() => print()} title="入力中の内容をPDF出力と同じ様式で確認します（保存はしません）">PDFで確認</button>
         <button type="button" className="btn" disabled={busy} onClick={save}>{pending ? "保存" : "下書き保存"}</button>
         {!pending && <button type="button" className="btn primary" disabled={busy} onClick={submit}>提出する</button>}
       </div>
       {busy && <p className="hint">保存しています…</p>}
+      </div>
     </>
   );
 }

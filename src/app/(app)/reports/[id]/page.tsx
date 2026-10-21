@@ -10,6 +10,7 @@ import StatusTag from "@/components/StatusTag";
 import RouteView from "@/components/RouteView";
 import VisitContent from "@/components/VisitContent";
 import PrintReport from "@/components/PrintReport";
+import PhotoZoom from "@/components/PhotoZoom";
 import { DecisionPanel, ReportActions } from "./ReportActions";
 import { T, F } from "@/lib/db";
 
@@ -82,7 +83,7 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
         visits={visits}
       />
       <div className="screen-only">
-      <h2>出張報告書 <StatusTag status={r.status} /></h2>
+      <h2>出張報告書 <StatusTag status={r.status} owner={r.owner_id === me.id} /></h2>
       <div className="card">
         <div className="row" style={{ gap: 32 }}>
           <div className="field"><label>申請者</label><div>{name(r.owner_id)}</div></div>
@@ -94,6 +95,7 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
         </div>
       </div>
 
+      <PhotoZoom>
       {visits.map((v, i) => (
         <div className="visit" key={v.id}>
           <div className="visit-head">訪問先 {i + 1}：{v.customer_name || "（訪問先名未入力）"}</div>
@@ -101,6 +103,7 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
           <VisitContent doc={v.content} />
         </div>
       ))}
+      </PhotoZoom>
       {!visits.length && <div className="card hint">訪問先はまだ入力されていません</div>}
 
       <h3 className="no-print">承認履歴</h3>

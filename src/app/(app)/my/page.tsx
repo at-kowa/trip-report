@@ -64,7 +64,7 @@ export default async function MyReports() {
                   <div key={i}>{v.customer_name || <span className="hint">（訪問先名未入力）</span>}</div>
                 ))}
               </td>
-              <td><StatusTag status={r.status} /></td>
+              <td><StatusTag status={r.status} owner /></td>
               <td>
                 <RouteView
                   status={r.status}

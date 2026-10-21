@@ -56,3 +56,16 @@ export async function loadLastReject(supabase: Supabase, reportId: string) {
   const { data: p } = await supabase.from(T.profiles).select("name").eq("id", data.actor_id).maybeSingle();
   return { name: p?.name ?? "（不明）", comment: data.comment ?? "" };
 }
+
+// 入力画面の PDF確認で使う承認欄の並び
+//   申請中は報告書に写した承認ルート、下書き・差戻しは今の承認ルート（提出のときに写される）
+export async function loadPreviewSteps(supabase: Supabase, ownerId: string, reportId: string | null, status: string) {
+  const { data } = status === "pending" && reportId
+    ? await supabase.from(T.reportRouteSteps).select("step_no, approver_id").eq("report_id", reportId)
+    : await supabase.from(T.approvalRoutes).select("step_no, approver_id").eq("applicant_id", ownerId);
+  const rows = ((data ?? []) as { step_no: number; approver_id: string }[]).sort((a, b) => a.step_no - b.step_no);
+  if (!rows.length) return [];
+  const { data: people } = await supabase.from(T.profiles).select("id, name").in("id", rows.map((r) => r.approver_id));
+  const nameOf = new Map((people ?? []).map((p) => [p.id, p.name as string]));
+  return rows.map((r) => ({ step_no: r.step_no, name: nameOf.get(r.approver_id) ?? "（不明）" }));
+}

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import type { ReportStatus } from "@/lib/report";
-import { loadLastReject, loadSuggestions, loadVisits } from "@/lib/reportServer";
+import { loadLastReject, loadPreviewSteps, loadSuggestions, loadVisits } from "@/lib/reportServer";
 import ReportForm from "../../ReportForm";
 import { T, F } from "@/lib/db";
 
@@ -14,7 +14,7 @@ export default async function EditReport({ params }: { params: Promise<{ id: str
   const supabase = await createClient();
 
   const [{ data: report }, { data: canEdit }] = await Promise.all([
-    supabase.from(T.reports).select("id, status, start_date, end_date").eq("id", id).maybeSingle(),
+    supabase.from(T.reports).select("id, status, start_date, end_date, submitted_at").eq("id", id).maybeSingle(),
     supabase.rpc(F.canEditReport, { p_report_id: id }),
   ]);
   if (!report || !canEdit) {
@@ -26,10 +26,11 @@ export default async function EditReport({ params }: { params: Promise<{ id: str
     );
   }
 
-  const [visits, rejectComment, suggestions] = await Promise.all([
+  const [visits, rejectComment, suggestions, previewSteps] = await Promise.all([
     loadVisits(supabase, id),
     report.status === "rejected" ? loadLastReject(supabase, id) : null,
     loadSuggestions(supabase),
+    loadPreviewSteps(supabase, me.id, id, report.status),
   ]);
 
   return (
@@ -40,6 +41,7 @@ export default async function EditReport({ params }: { params: Promise<{ id: str
         status: report.status as ReportStatus,
         start_date: report.start_date ?? "",
         end_date: report.end_date ?? "",
+        submitted_at: report.submitted_at,
         visits: visits.map((v) => ({
           id: v.id, visit_date: v.visit_date ?? "", customer_name: v.customer_name, contact_name: v.contact_name, content: v.content,
         })),
@@ -47,6 +49,7 @@ export default async function EditReport({ params }: { params: Promise<{ id: str
       applicantName={me.name}
       rejectComment={rejectComment}
       suggestions={suggestions}
+      previewSteps={previewSteps}
     />
   );
 }
