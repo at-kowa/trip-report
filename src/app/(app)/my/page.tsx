@@ -46,6 +46,7 @@ export default async function MyReports() {
       <h2>
         自分の出張報告書
         <Link href="/reports/new" className="btn primary">＋ 新規作成</Link>
+        <a href="/api/reports/export?scope=my" className="btn" download>CSV出力</a>
       </h2>
       {error && <div className="errbox">報告書を読み込めませんでした：{error.message}</div>}
       {rejected > 0 && (

@@ -72,7 +72,11 @@ export default async function Approvals({ searchParams }: { searchParams: Promis
 
   return (
     <>
-      <h2>承認対応</h2>
+      <h2>
+        承認対応
+        {/* 承認者として閲覧できる報告書（承認待ち・処理済み）を、訪問先1件を1行にして書き出す */}
+        <a href="/api/reports/export?scope=approver" className="btn" download>CSV出力</a>
+      </h2>
       <div className="tabs">
         <Link href="/approvals" className={tab === "wait" ? "on" : ""}>
           承認待ち{waiting.length > 0 && <span className="badge">{waiting.length}</span>}

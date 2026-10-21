@@ -46,7 +46,12 @@ export default async function AllReports({ searchParams }: { searchParams: Promi
 
   return (
     <>
-      <h2>全報告書 <span className="hint" style={{ fontWeight: "normal" }}>{list.length} 件</span></h2>
+      <h2>
+        全報告書 <span className="hint" style={{ fontWeight: "normal" }}>{list.length} 件</span>
+        {/* 今の絞り込みのまま、訪問先1件を1行にして書き出す */}
+        <a className="btn" download
+          href={`/api/reports/export?${new URLSearchParams({ scope: "all", ...(status && { status }), ...(plant && { plant }) })}`}>CSV出力</a>
+      </h2>
       <QueryFilters fields={[
         { key: "status", label: "状況", value: status, options: [["", "すべて"], ...STATUSES.map((s): [string, string] => [s, STATUS_LABEL[s]])] },
         { key: "plant", label: "工場（提出時）", value: plant, options: [["", "すべて"], ...plants.map((p): [string, string] => [p, p])] },
