@@ -188,3 +188,6 @@ dialog.photo-zoom { padding: 0; border: none; background: transparent; max-width
 dialog.photo-zoom::backdrop { background: rgba(0, 0, 0, 0.8); }
 dialog.photo-zoom img { display: block; max-width: 95vw; max-height: 90vh; margin: 4vh auto 0; object-fit: contain; background: #fff; }
 dialog.photo-zoom .photo-zoom-hint { text-align: center; color: #fff; font-size: 12px; margin-top: 8px; }
+
+/* アプリのバージョン表示（AppVersion） */
+.app-version { text-align: center; font-size: 11px; color: var(--gray); margin: 32px 0 16px; }

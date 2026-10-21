@@ -3,6 +3,7 @@ import { ROLE_LABEL, type Role } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { T } from "@/lib/db";
 import LoginForm, { type TestUser } from "./LoginForm";
+import AppVersion from "@/components/AppVersion";
 
 export const dynamic = "force-dynamic";
 
@@ -18,5 +19,10 @@ async function loadTestUsers(): Promise<TestUser[] | null> {
 }
 
 export default async function LoginPage() {
-  return <LoginForm testUsers={await loadTestUsers()} />;
+  return (
+    <>
+      <LoginForm testUsers={await loadTestUsers()} />
+      <AppVersion />
+    </>
+  );
 }

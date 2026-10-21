@@ -1,6 +1,7 @@
 // ログイン後の画面の共通部分（メニュー・件数バッジ・自動ログアウト）
 import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import AppVersion from "@/components/AppVersion";
 import IdleLogout from "@/components/IdleLogout";
 import LogoutButton from "@/components/LogoutButton";
 import NavLinks, { type NavItem } from "@/components/NavLinks";
@@ -30,6 +31,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       </header>
       <IdleLogout />
       <main>{children}</main>
+      <AppVersion />
     </>
   );
 }
