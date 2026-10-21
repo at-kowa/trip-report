@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { T } from "@/lib/db";
 import LoginForm, { type TestUser } from "./LoginForm";
 import AppVersion from "@/components/AppVersion";
+import UpdateNotice from "@/components/UpdateNotice";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,7 @@ async function loadTestUsers(): Promise<TestUser[] | null> {
 export default async function LoginPage() {
   return (
     <>
+      <UpdateNotice />
       <LoginForm testUsers={await loadTestUsers()} />
       <AppVersion />
     </>

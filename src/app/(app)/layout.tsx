@@ -5,6 +5,7 @@ import AppVersion from "@/components/AppVersion";
 import IdleLogout from "@/components/IdleLogout";
 import LogoutButton from "@/components/LogoutButton";
 import NavLinks, { type NavItem } from "@/components/NavLinks";
+import UpdateNotice from "@/components/UpdateNotice";
 import { F } from "@/lib/db";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -30,6 +31,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </span>
       </header>
       <IdleLogout />
+      <UpdateNotice />
       <main>{children}</main>
       <AppVersion />
     </>

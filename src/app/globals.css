@@ -191,3 +191,6 @@ dialog.photo-zoom .photo-zoom-hint { text-align: center; color: #fff; font-size:
 
 /* アプリのバージョン表示（AppVersion） */
 .app-version { text-align: center; font-size: 11px; color: var(--gray); margin: 32px 0 16px; }
+
+/* 新しい版のお知らせ（UpdateNotice） */
+.update-notice { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 10px 16px; background: var(--orange-soft); border-bottom: 1px solid var(--orange); color: var(--navy); font-size: 14px; }
