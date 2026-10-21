@@ -61,10 +61,10 @@ function Form({ testUsers }: { testUsers: TestUser[] | null }) {
 
       {/* テスト用の利用者一覧（環境変数 SHOW_TEST_USERS=1 のときだけ表示。行をクリックするとメールアドレスが入る） */}
       {testUsers && (
-        <div className="card" style={{ maxWidth: 720, margin: "0 auto 40px" }}>
+        <div className="card test-users" style={{ maxWidth: 720, margin: "0 auto 40px" }}>
           <b>テスト用の利用者</b>
           <span className="hint">（テスト時だけ表示しています。行をクリックするとメールアドレスが入ります）</span>
-          <table className="list" style={{ marginTop: 8 }}>
+          <table className="list" style={{ marginTop: 6 }}>
             <thead><tr><th>氏名</th><th>メールアドレス</th><th>役割</th><th>状態</th></tr></thead>
             <tbody>
               {testUsers.map((u) => (
